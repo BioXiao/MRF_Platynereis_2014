@@ -39,6 +39,7 @@ The parameters for the algorithm are as follow ([parameter name] indicates the p
 - [number of clusters K]
 - [result folder]
 - [outputFileName]
+- [number of clusters changed from one iteration to the next to assume convergence]
 - {"fixed"} (if present, beta will be fixed to initial value instead of being estimated)
 
 ### OUTPUT FILES
