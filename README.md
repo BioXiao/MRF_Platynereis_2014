@@ -2,7 +2,9 @@
 The goal of the algorithm presented in this project is to estimate the parameters of a HMRF model with extended spatial dependencies through an EM procedure using mean field approximation (manuscript submitted for publication)
 
 `Jean-Baptiste Pettit 2014`
+
 `European Bioinformatics Institute`
+
  NOTICE OF LICENSE - This source is subject to the Academic Free License (AFL 3.0) that is bundled with this package in the file LICENSE_AFL.txt.
 
 ## COMPILING THE CODE
