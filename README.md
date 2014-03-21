@@ -42,6 +42,8 @@ The parameters for the algorithm are as follow ([parameter name] indicates the p
 - [number of clusters changed from one iteration to the next to assume convergence]
 - {"fixed"} (if present, beta will be fixed to initial value instead of being estimated)
 
+Example command : `./EM data/binary_86_genes.tab data/neighbouring_graph.nei rand 0 10 myResultFolder myResultFile 50`
+
 ### OUTPUT FILES
 The algorithm produces 4 files when convergence is reached
 - outputFileName.csv contains the clustering results in the same format as the initialization file
