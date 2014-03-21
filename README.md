@@ -1,5 +1,5 @@
-##Mean field Markov Random field with extended spatial parameters EM procedure.
-The goal of the algorithm presented in this project is to estimate the parameters of a HMRF model with extended spatial dependencies through an EM procedure using mean field approximation (manuscript submitted for publication)
+##Mean field Markov random field with extended spatial parameters EM procedure.
+The goal of the algorithm presented in this project is to estimate the parameters of a HMRF model with extended spatial dependencies through an EM procedure using mean field approximation in the case of binary gene expression data with a spatial reference (manuscript submitted for publication)
 
 `Jean-Baptiste Pettit 2014`
 
@@ -8,7 +8,13 @@ The goal of the algorithm presented in this project is to estimate the parameter
  NOTICE OF LICENSE - This source is subject to the Academic Free License (AFL 3.0) that is bundled with this package in the file LICENSE_AFL.txt.
 
 ## COMPILING THE CODE
-The implementation is written in C. a make file is available but has only been tested on a Linux platform. If you are having troubles compiling in other environnement please report an issue on the project Github page (https://github.com/jbogp/MRF_Platynereis_2014/issues)
+The implementation is written in the C programming language. A make file is available but has only been tested on a Linux platform. If you are having troubles compiling in other environnements please create an issue on the project Github page (https://github.com/jbogp/MRF_Platynereis_2014/issues)
+
+to compile on a linux environement from the command line, just go to the directory containing the code and type:
+
+`make`
+
+This should create the executable file `EM` that you can then run by typing the command `./EM` (see BASIC USAGE for the details)
 
 ## BASIC USAGE MANUAL
 ### REQUIRED FILES
