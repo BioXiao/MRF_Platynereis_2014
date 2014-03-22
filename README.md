@@ -12,7 +12,9 @@ The implementation is written in the C programming language. A make file is avai
 
 to compile from the command line, just go to the directory containing the code and type:
 
-`make`
+`make` for linux
+
+`make windows` for Windows
 
 This should create the executable file `EM` on linux, `EM.exe` on Windows that you can then run by typing the command `./EM` or `EM.exe` on Windows (see BASIC USAGE for the details)
 

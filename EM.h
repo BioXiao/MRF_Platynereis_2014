@@ -12,7 +12,7 @@
 
 
 #define LG_LIG_MAX 1000000
-#define LG_GENES_MAX 100000
+#define LG_GENES_MAX 1000
 #define LG_NEI_MAX 200
 #include <stdio.h>
 #include <time.h>
@@ -21,7 +21,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include <malloc.h>
+#ifdef linux
 #include <sys/signal.h>
+#endif
 
 /****************************START Defining structures***********************************/
 	/*Model parameters we want to estimate or that are set*/	
@@ -50,10 +52,10 @@
 		params parameters;
 		dataSet set;
 		int numClust;
-		long double ** tihm;
-		long double ** cellDensities;
-		long double likelihood;
-		long double fullLikelihood;
+		double ** tihm;
+		double ** cellDensities;
+		double likelihood;
+		double fullLikelihood;
 		double * beta; /*smoothness param */
 	} classif;
 
@@ -100,20 +102,20 @@ int zerosInVector(int * vector,int length);
 */
 void noEmptyClass(classif * myClassif);
 /*Computes logLikelihood*/
-long double computeFullLogLikelihood(classif * myClassif/*I*/);
+double computeFullLogLikelihood(classif * myClassif/*I*/);
 /*Computes the beta part of the expected likelihood*/
-long double computeBetaExpectation(classif * myClassif/*I*/);
+double computeBetaExpectation(classif * myClassif/*I*/);
 /*Computes expectation*/
-long double computeFullExpectation(classif * myClassif/*I*/);
+double computeFullExpectation(classif * myClassif/*I*/);
 
-long double computePseudoLogLikelihood(classif * myClassif/*I*/);
+double computePseudoLogLikelihood(classif * myClassif/*I*/);
 /*Set model pseudo-logLikelihood*/
 void computeCellDensities(classif * myClassif/*I/O*/);
-long double cellDensity(classif * myClassif/*i*/,int clust/*I*/,int cell/*I*/);
-long double logCellDensity(classif * myClassif/*i*/,int clust/*I*/,int cell/*I*/);
+double cellDensity(classif * myClassif/*i*/,int clust/*I*/,int cell/*I*/);
+double logCellDensity(classif * myClassif/*i*/,int clust/*I*/,int cell/*I*/);
 
 
-long double computeNeiCoef(classif * myClassif/*i\O*/,long double ** currentT/*I*/,int clust/*I*/,int cell/*I*/);
+double computeNeiCoef(classif * myClassif/*i\O*/,double ** currentT/*I*/,int clust/*I*/,int cell/*I*/);
 
 
 /*Computes current thims*/

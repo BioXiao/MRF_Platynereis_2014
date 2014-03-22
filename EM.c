@@ -10,8 +10,8 @@
  * http://opensource.org/licenses/afl-3.0.php.
 ****************************************************************************************************/
 
-/**********************************BASIC USAGE EXPLANATIONS******************************************
-* A prettier explanation can be found in the wiki of the github page of the project here:
+/**********************************BASIC USAGE expANATIONS******************************************
+* A prettier expanation can be found in the wiki of the github page of the project here:
 * https://github.com/jbogp/MRF_Platynereis_2014/wiki
 *
 ####### COMPILING THE CODE #######
@@ -83,6 +83,10 @@ void load_data(FILE * data /*I*/,dataSet * myData/*I\O*/) {
 	/*instructions*/
 	while(fgets(line,LG_LIG_MAX+1,data) != NULL) {	
 		(myData->obs)[i].expVect = (int *)malloc(sizeof(int)*LG_GENES_MAX);
+		if ((myData->obs)[i].expVect == NULL) {
+			printf("Out of memory data\n");
+			exit(-1);
+		}
 		length = parse_vect(line,(myData->obs)[i].expVect);			
 		i++;
 	}
@@ -129,6 +133,10 @@ void load_nei(FILE * data /*I*/,dataSet * myData/*I\O*/) {
 	/*instructions*/
 	while(fgets(line,LG_LIG_MAX+1,data) != NULL) {	
 		(myData->obs)[i].nei = (int *)malloc(sizeof(int)*LG_NEI_MAX);
+		if ((myData->obs)[i].nei == NULL) {
+			printf("Out of memory neighbours\n");
+			exit(-1);
+		}
 		length = parse_nei(line,(myData->obs)[i].nei);	
 
 		(myData->obs)[i].numNei = length;		
@@ -145,7 +153,7 @@ void load_nei(FILE * data /*I*/,dataSet * myData/*I\O*/) {
 returns void*/
 void initClassifRand(dataSet set/*I*/,int numClust/*I*/, classif* myClassif/*I\O*/,double beta) {
 	int i,k;
-	long double logLike,bestLogLike;
+	double logLike,bestLogLike;
 	int * bestClust;
 	int numRand = 10;
 	/*initializing parameters and setting set*/
@@ -159,14 +167,14 @@ void initClassifRand(dataSet set/*I*/,int numClust/*I*/, classif* myClassif/*I\O
 	myClassif->parameters.theta = (double **)malloc(sizeof(double*)*numClust);
 
 	/*Init tihms to 0??*/
-	myClassif->tihm = (long double **)malloc(sizeof(long double*)*myClassif->numClust);
+	myClassif->tihm = (double **)malloc(sizeof(double*)*myClassif->numClust);
 	/*Init cell densities*/
-	myClassif->cellDensities = (long double **)malloc(sizeof(long double*)*myClassif->numClust);
+	myClassif->cellDensities = (double **)malloc(sizeof(double*)*myClassif->numClust);
 	
 	/*iter on clusters*/
 	for(k=0;k<numClust;k++) {
-		myClassif->tihm[k] = (long double *)malloc(sizeof(long double)*myClassif->set.num);
-		myClassif->cellDensities[k] = (long double *)malloc(sizeof(long double)*myClassif->set.num);
+		myClassif->tihm[k] = (double *)malloc(sizeof(double)*myClassif->set.num);
+		myClassif->cellDensities[k] = (double *)malloc(sizeof(double)*myClassif->set.num);
 		for(i=0;i<myClassif->set.num;i++){
 			myClassif->tihm[k][i] = 0;
 		}
@@ -201,7 +209,7 @@ void initClassifRand(dataSet set/*I*/,int numClust/*I*/, classif* myClassif/*I\O
 			bestLogLike = logLike;
 			memcpy(bestClust,myClassif->clust,(set.num)*sizeof(int)); 
 		}
-		printf("Init %d likelihood : %Le\n",k,bestLogLike);
+		printf("Init %d likelihood : %e\n",k,logLike);
 	}
 	
 	/*Assigning best random classif, no need to recompute thetas and thims, it will be done at first iteration*/
@@ -214,7 +222,7 @@ void initClassifRand(dataSet set/*I*/,int numClust/*I*/, classif* myClassif/*I\O
 	computeCellDensities(myClassif);
 	/*computing tihms with 1 step fixed point*/
 	computeThims(myClassif,2);
-	printf("\tBest init has a likelihood of %Le\n",bestLogLike);
+	printf("\tBest init has a likelihood of %e\n",bestLogLike);
 	
 	free(bestClust);
 
@@ -252,14 +260,14 @@ void initClassifFile(dataSet set/*I*/,FILE * data, classif* myClassif/*I\O*/,dou
 	myClassif->parameters.theta = (double **)malloc(sizeof(double*)*myClassif->numClust);
 
 	/*Init tihms to 0??*/
-	myClassif->tihm = (long double **)malloc(sizeof(long double*)*myClassif->numClust);
+	myClassif->tihm = (double **)malloc(sizeof(double*)*myClassif->numClust);
 	/*Init cell densities*/
-	myClassif->cellDensities = (long double **)malloc(sizeof(long double*)*myClassif->numClust);
+	myClassif->cellDensities = (double **)malloc(sizeof(double*)*myClassif->numClust);
 	
 	/*iter on clusters*/
 	for(k=0;k<myClassif->numClust;k++) {
-		myClassif->tihm[k] = (long double *)malloc(sizeof(long double)*myClassif->set.num);
-		myClassif->cellDensities[k] = (long double *)malloc(sizeof(long double)*myClassif->set.num);
+		myClassif->tihm[k] = (double *)malloc(sizeof(double)*myClassif->set.num);
+		myClassif->cellDensities[k] = (double *)malloc(sizeof(double)*myClassif->set.num);
 		for(i=0;i<myClassif->set.num;i++){
 			myClassif->tihm[k][i] = 0;
 		}
@@ -278,18 +286,18 @@ void initClassifFile(dataSet set/*I*/,FILE * data, classif* myClassif/*I\O*/,dou
 }
 
 /*Compute cell density for one cell one cluster*/
-long double cellDensity(classif * myClassif/*i*/,int clust/*I*/,int cell/*I*/) {
+double cellDensity(classif * myClassif/*i*/,int clust/*I*/,int cell/*I*/) {
 	int j;
-	long double density=0;
-	long double ret=0;
+	double density=0;
+	double ret=0;
 	
 	/*Iter on genes*/
 	for(j=1;j<myClassif->set.length;j++) {
 		if(myClassif->set.obs[cell].expVect[j] == 1) {
-			density = logl((long double)myClassif->parameters.theta[clust][j]);
+			density = log((double)myClassif->parameters.theta[clust][j]);
 		}
 		else {
-			density = logl((long double)1.0-myClassif->parameters.theta[clust][j]);
+			density = log((double)1.0-myClassif->parameters.theta[clust][j]);
 		}
 		ret = ret+density;
 		
@@ -367,10 +375,10 @@ void noEmptyClass(classif * myClassif) {
 
 
 /*Returns the neighboring for one cell and one cluster*/
-long double computeNeiCoef(classif * myClassif/*i\O*/,long double ** currentT/*I*/,int clust/*I*/,int cell/*I*/){
+double computeNeiCoef(classif * myClassif/*i\O*/,double ** currentT/*I*/,int clust/*I*/,int cell/*I*/){
 	int j;
-	long double temp=0;
-	long double ret=0;
+	double temp=0;
+	double ret=0;
 
 
 	for(j=0;j<myClassif->set.obs[cell].numNei;j++) {
@@ -383,9 +391,9 @@ long double computeNeiCoef(classif * myClassif/*i\O*/,long double ** currentT/*I
 }
 
 /*Returns Rz, the neighborhood factor to the model likelihood*/
-long double computeNeiLikelihood(classif * myClassif/*i\O*/,int cell/*I*/,int clust/*I*/){
+double computeNeiLikelihood(classif * myClassif/*i\O*/,int cell/*I*/,int clust/*I*/){
 	int j;
-	long double ret=0;
+	double ret=0;
 	
 	/*Iter on cell neighbors*/
 	for(j=0;j<myClassif->set.obs[cell].numNei;j++) {
@@ -400,9 +408,9 @@ long double computeNeiLikelihood(classif * myClassif/*i\O*/,int cell/*I*/,int cl
 
 
 /*Computes expectation*/
-long double computeFullExpectation(classif * myClassif/*I*/) {
+double computeFullExpectation(classif * myClassif/*I*/) {
 	int i,k;
-	long double logLikeRx=0.0,logLikeRz;
+	double logLikeRx=0.0,logLikeRz;
 	/*Checking for empty classes*/
 	noEmptyClass(myClassif);
 	/*Iter on cells*/
@@ -410,7 +418,7 @@ long double computeFullExpectation(classif * myClassif/*I*/) {
 		/*Iter on clusters*/
 		for(k=0;k<myClassif->numClust;k++){
 			/*Iter on genes*/
-			if(myClassif->tihm[k][i] != (long double)0) {
+			if(myClassif->tihm[k][i] != (double)0) {
 				logLikeRx = logLikeRx+((myClassif->cellDensities[k][i])*myClassif->tihm[k][i]);
 			}			
 		}
@@ -421,8 +429,8 @@ long double computeFullExpectation(classif * myClassif/*I*/) {
 }
 
 /*Computes the beta part of the expected likelihood*/
-long double computeBetaExpectation(classif * myClassif/*I*/) {
-	long double expectation = 0,numerator,denominator=0;
+double computeBetaExpectation(classif * myClassif/*I*/) {
+	double expectation = 0,numerator,denominator=0;
 	int i,k;
 	
 	/*summing over the cells to compute denominator*/
@@ -430,15 +438,15 @@ long double computeBetaExpectation(classif * myClassif/*I*/) {
 		denominator = 0;
 		/*Iter on clusters to compute denominator*/
 		for(k=1;k<=myClassif->numClust;k++){
-			denominator += expl(myClassif->beta[k-1]* computeNeiLikelihood(myClassif,i,k));
+			denominator += exp(myClassif->beta[k-1]* computeNeiLikelihood(myClassif,i,k));
 
 
 		}
-		numerator = expl(myClassif->beta[(myClassif->clust[i]-1)]*computeNeiLikelihood(myClassif,i,myClassif->clust[i]));
+		numerator = exp(myClassif->beta[(myClassif->clust[i]-1)]*computeNeiLikelihood(myClassif,i,myClassif->clust[i]));
 
 		/*Iter on possible clusters*/
 		for(k=1;k<=myClassif->numClust;k++){
-			expectation += myClassif->tihm[k-1][i]*logl(numerator/denominator);
+			expectation += myClassif->tihm[k-1][i]*log(numerator/denominator);
 		}
 	}
 
@@ -446,9 +454,9 @@ long double computeBetaExpectation(classif * myClassif/*I*/) {
 }
 
 /*Computes logLikelihood*/
-long double computeFullLogLikelihood(classif * myClassif/*I*/) {
+double computeFullLogLikelihood(classif * myClassif/*I*/) {
 	int i;
-	long double logLikeRx=0.0,logLikeRz;
+	double logLikeRx=0.0,logLikeRz;
 	/*Checking for empty classes*/
 	noEmptyClass(myClassif);
 	/*Iter on cells*/
@@ -461,8 +469,8 @@ long double computeFullLogLikelihood(classif * myClassif/*I*/) {
 }
 
 /*compute model pseudo-logLikelihood*/
-long double computePseudoLogLikelihood(classif * myClassif/*I*/) {
-	long double pseudoLike = 0,numerator,denominator=0;
+double computePseudoLogLikelihood(classif * myClassif/*I*/) {
+	double pseudoLike = 0,numerator,denominator=0;
 	int i,k;
 	
 	/*summing over the cells to compute denominator*/
@@ -470,11 +478,11 @@ long double computePseudoLogLikelihood(classif * myClassif/*I*/) {
 		denominator = 0;
 		/*Iter on clusters to compute denominator*/
 		for(k=1;k<=myClassif->numClust;k++){
-			denominator += expl(myClassif->beta[k-1]* computeNeiLikelihood(myClassif,i,k));
+			denominator += exp(myClassif->beta[k-1]* computeNeiLikelihood(myClassif,i,k));
 		}
 
-		numerator = expl(myClassif->beta[(myClassif->clust[i]-1)]*computeNeiLikelihood(myClassif,i,myClassif->clust[i]));
-		pseudoLike += logl(numerator/denominator);
+		numerator = exp(myClassif->beta[(myClassif->clust[i]-1)]*computeNeiLikelihood(myClassif,i,myClassif->clust[i]));
+		pseudoLike += log(numerator/denominator);
 	}
 
 	return pseudoLike;
@@ -487,13 +495,13 @@ long double computePseudoLogLikelihood(classif * myClassif/*I*/) {
 */
 void computeThims(classif * myClassif /*I/O*/, int numIterFixed /*I*/) {
 	int k,i,iterFixed;
-	long double sumDivisor;
-	long double * neiCoef;
-	long double temp;
+	double sumDivisor;
+	double * neiCoef;
+	double temp;
 	
 
 	/*Allocating memory*/
-	neiCoef = (long double *)malloc(sizeof(long double)*myClassif->numClust);
+	neiCoef = (double *)malloc(sizeof(double)*myClassif->numClust);
 
 	/* Checking if mem alloc went OK*/
 	if (neiCoef != NULL) {
@@ -507,14 +515,14 @@ void computeThims(classif * myClassif /*I/O*/, int numIterFixed /*I*/) {
 				/* Computing all cell densities*/
 				for(k=0;k<myClassif->numClust;k++) {
 
-					neiCoef[k] = expl(computeNeiCoef(myClassif,myClassif->tihm,k,i)*(long double)myClassif->beta[k]);
+					neiCoef[k] = exp(computeNeiCoef(myClassif,myClassif->tihm,k,i)*(double)myClassif->beta[k]);
 
-					sumDivisor = sumDivisor+(expl(myClassif->cellDensities[k][i])*neiCoef[k]);
+					sumDivisor = sumDivisor+(exp(myClassif->cellDensities[k][i])*neiCoef[k]);
 
 
 				}
 				for(k=0;k<myClassif->numClust;k++) {
-					temp = (expl(myClassif->cellDensities[k][i])*neiCoef[k])/sumDivisor;
+					temp = (exp(myClassif->cellDensities[k][i])*neiCoef[k])/sumDivisor;
 					myClassif->tihm[k][i] = temp;	
 				}
 
@@ -540,10 +548,10 @@ void computeThims(classif * myClassif /*I/O*/, int numIterFixed /*I*/) {
 
 /*Gradient descent algorithm to maximize beta paramters sequentially*/
 void gradientAscent(classif * myClassif /*I/O*/) {
-	long double derivatePlus,derivateMinus;
+	double derivatePlus,derivateMinus;
 	double init_step = 0.1;
 	double step = init_step;
-	long double currentLike = 0;
+	double currentLike = 0;
 	double oriBeta;
 	int stopAscent =0;
 	int k;
@@ -586,7 +594,7 @@ void gradientAscent(classif * myClassif /*I/O*/) {
 			}
 
 			/*Uncomment for verbose mode on the gradient ascent*/
-			/*printf("cluster : %d | derivPlus: %Le | derivMinus: %Le | like : %Le | beta : %f | step : %f\n",k,derivatePlus,derivateMinus,currentLike,myClassif->beta[k],step);*/
+			/*printf("cluster : %d | derivPlus: %e | derivMinus: %e | like : %e | beta : %f | step : %f\n",k,derivatePlus,derivateMinus,currentLike,myClassif->beta[k],step);*/
 		}
 	}
 	
@@ -602,7 +610,7 @@ void gradientAscent(classif * myClassif /*I/O*/) {
 */
 int eStep(classif * myClassif /*I\O*/) {
 	int k,i,hasConverged=0;
-	long double maxClust;
+	double maxClust;
 	int clustK;
 	
 	/*Computing new cell densities*/
@@ -730,13 +738,13 @@ void outputThetas(char * out,classif * myClassif) {
 
 /*Outputs EM summary for further analysis*/
 void outputEMSummary(char * out,classif * myClassif,int numIter) {
-	long double likely;
+	double likely;
 	FILE * file;	
 
 	file = fopen(out,"w");
 	likely = computeFullExpectation(myClassif);
 	fprintf(file,"numClust\t%d\n",myClassif->numClust);
-	fprintf(file,"likelihood\t%Le\n",likely);
+	fprintf(file,"likelihood\t%e\n",likely);
 	fprintf(file,"Iterations\t%d\n",numIter);
 	fclose(file);
 } 
@@ -815,10 +823,12 @@ int main(int argc, char* argv[]) {
 	int type_beta=0;
 
 
-
+#ifdef linux
 	/*Handling kill signals to output current results on kill*/
 	signal (SIGQUIT, killHandle);
 	signal (SIGINT, killHandle);
+#endif
+
 	
 	/* Start*/
 	/*checking command*/
@@ -827,6 +837,7 @@ int main(int argc, char* argv[]) {
 	}
 	else {
 	
+
 		/*Set required parameters*/
 		hasConverged=atoi(argv[8])+1;
 		convergeLimit=atoi(argv[8]);
@@ -863,8 +874,15 @@ int main(int argc, char* argv[]) {
 
 		/*Initializing output*/
 		process_mask = umask(0);
+		#ifdef linux
 		mkdir(argv[6], S_IRWXU | S_IRWXG | S_IRWXO);
 		umask(process_mask);
+		#endif
+		#if defined(_WIN32)
+		_mkdir(argv[6]);
+		#endif
+		
+		
 
 		printf("Initialisation done.\n");
 		/* END INITIALIZATION */
@@ -890,7 +908,7 @@ int main(int argc, char* argv[]) {
 			}
 			printf("\n");
 
-			printf("\tClusters changed : %d\n\tCurrent Likelihood :%Le\n",hasConverged,computeFullLogLikelihood(&clusters));
+			printf("\tClusters changed : %d\n\tCurrent Likelihood :%e\n",hasConverged,computeFullLogLikelihood(&clusters));
 
 
 			if(hasConverged <= convergeLimit) {
