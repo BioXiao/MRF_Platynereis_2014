@@ -20,7 +20,6 @@
 #include <sys/stat.h>
 #include <string.h>
 #include <stdlib.h>
-#include <malloc.h>
 #ifdef linux
 #include <sys/signal.h>
 #endif
