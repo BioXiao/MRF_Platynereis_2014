@@ -7,6 +7,11 @@ The goal of the algorithm presented in this project is to estimate the parameter
 
  NOTICE OF LICENSE - This source is subject to the Academic Free License (AFL 3.0) that is bundled with this package in the file LICENSE_AFL.txt.
 
+## AVAILABLE BINARIES 
+To use the program on Windows or an Apple device, you can dowload the binaries directly (see files above)
+
+For Linux see the section below about compiling the code
+
 ## COMPILING THE CODE
 The implementation is written in the C programming language. A make file is available it has been compiled and executed successfully on Linux and Windows (using GNUWin32 (make) and minGW (gcc)). If you are having troubles compiling in other environnements please create an issue on the project Github page (https://github.com/jbogp/MRF_Platynereis_2014/issues)
 
