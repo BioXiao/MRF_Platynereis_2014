@@ -873,8 +873,8 @@ int main(int argc, char* argv[]) {
 		}
 
 		/*Initializing output*/
+		#if defined(linux) || defined(__APPLE__)
 		process_mask = umask(0);
-		#ifdef linux
 		mkdir(argv[6], S_IRWXU | S_IRWXG | S_IRWXO);
 		umask(process_mask);
 		#endif
