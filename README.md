@@ -8,7 +8,7 @@ The goal of the algorithm presented in this project is to estimate the parameter
  NOTICE OF LICENSE - This source is subject to the Academic Free License (AFL 3.0) that is bundled with this package in the file LICENSE_AFL.txt.
 
 ## AVAILABLE BINARIES 
-To use the program on Windows or an Apple device, you can dowload the binaries directly (see files above)
+To use the program on Windows or an Apple device, you can dowload the binaries directly (see the `binaries` folder above)
 
 For Linux see the section below about compiling the code
 
