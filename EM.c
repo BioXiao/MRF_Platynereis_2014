@@ -368,6 +368,8 @@ void noEmptyClass(classif * myClassif) {
 		}
 	}
 
+	free(numTot);
+
 }
 
 
